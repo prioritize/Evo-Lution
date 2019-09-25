@@ -18,11 +18,17 @@ public class DNA<T>
 	public T[] Genes{get; private set;}
 	public float Fitness{get; private set;}
 	private Random random;
+	private Func<T> getRandomGene;
 
-	public DNA(int size, Random random)
+	public DNA(int size, Random random, Func<T>  getRandomGene, bool shouldInitGenes = true)
 	{
 		Genes = new T[size];
 		this.random = random;
+		this.getRandomGene = getRandomGene;
+		for (int i = 0; i < Genes.Length; i++)
+		{
+			Genes[i] = getRandomGene();
+		}
 	}
 	public float CalculateFitness()
 	{
@@ -31,7 +37,7 @@ public class DNA<T>
 	public DNA<T> Crossover(DNA<T> otherParent)
 	{
 		// We know that the output of the crossover function will be a child as this function is simulating reproduction
-		DNA<T> child = new DNA<T>(Genes.Length, this.random);
+		DNA<T> child = new DNA<T>(Genes.Length, this.random, getRandomGene);
 		// Create a random that will be used to determine which parents genes will be used
 		Random random = new Random();
 		for (int i = 0; i < Genes.Length; i++)
@@ -47,7 +53,7 @@ public class DNA<T>
 		{
 			if(random.NextDouble() < mutationRate)
 			{
-				// Genes[i] = ???
+				Genes[i] = getRandomGene();
 			}
 		}
 	}
